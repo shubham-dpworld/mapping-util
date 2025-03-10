@@ -1,37 +1,3 @@
-let pyodideInstance = null;
-
-export async function initializePyodide() {
-  if (!pyodideInstance) {
-    // Use dynamic import with explicit URL
-    const pyodide = await import(/* webpackIgnore: true */ 'https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.mjs');
-    pyodideInstance = await pyodide.loadPyodide({
-      indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.21.3/full/'
-    });
-    console.log("✅ Pyodide initialized successfully!");
-  }
-  return pyodideInstance;
-}
-
-
-export async function runMappingPyodide(sourceData, sourceType, targetData, targetType) {
-    await initializePyodide();
-
-    // Add these 2 lines to install missing dependencies
-    await pyodideInstance.loadPackage("micropip");
-    await pyodideInstance.runPythonAsync(`
-        import micropip
-        await micropip.install("xmltodict")
-    `);
-
-
-    console.log('source data:', sourceData);
-    console.log('source type:', sourceType);
-    console.log('target data:', targetData);
-    console.log('target type:', targetType);
-
-    // Rest of your existing code remains unchanged
-    const pyScript = `
-    import json
 import json
 import xml.etree.ElementTree as ET
 import os
@@ -333,7 +299,7 @@ def create_excel_mapping(source_fields, target_fields, field_mappings, excel_fil
     for i, path in enumerate(total_dropdown_fields, start=2):
         ws_hidden[f"A{i}"] = path
 
-    dropdown_range = 3
+    dropdown_range = f"'DropdownValues'!$A$2:$A${len(total_dropdown_fields) + 1}"
 
     if not isinstance(field_mappings, dict):
         raise TypeError("❌ Error: field_mappings should be a dictionary!")
@@ -738,10 +704,6 @@ def main(source_file_type=None, source_file=None, target_file_type=None, target_
             user_input["elem_sep"], 
             user_input["sub_elem_sep"]
         )
-if __name__ == "__main__":
-    main(sourceType, sourceData, targetType, targetData")
-    `;
 
-    let result = await pyodideInstance.runPythonAsync(pyScript);
-    return JSON.parse(result);
-}
+if __name__ == "__main__":
+    main(source_file_type="json", source_file="source.json", target_file_type="json", target_file="target.json")
