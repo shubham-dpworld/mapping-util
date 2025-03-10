@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { utils, writeFile } from "xlsx";
 import "./FileMapper.css";
+import { runMappingPyodide } from "../../utils/runPyodide"; // Import the function
 
 const FileMapper = () => {
   const [formData, setFormData] = useState({
@@ -23,7 +24,7 @@ const FileMapper = () => {
   const validateFile = (file, type) => {
     if (!type) return false;
     const extension = file.name.split(".").pop().toLowerCase();
-    return fileTypes[type].includes(extension);
+    return fileTypes[type]?.includes(extension);
   };
 
   const handleInputChange = (e) => {
@@ -81,14 +82,19 @@ const FileMapper = () => {
     setIsLoading(true); // Start loading
 
     try {
-      // Simulate delay for demonstration (remove in production)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const data = [
-        { "Source Field": "Field1", "Target Field": "Mapped1", Confidence: "95%" },
-        { "Source Field": "Field2", "Target Field": "Mapped2", Confidence: "85%" },
-      ];
+      // Read both files as raw text
+      const sourceText = await formData.sourceFile.text();
+      const targetText = await formData.targetFile.text();
 
+      // Run Pyodide Mapping (Send raw content + format type)
+      const data = await runMappingPyodide(
+        sourceText,
+        formData.sourceType,
+        targetText,
+        formData.targetType
+      );
+
+      console.log(data);
       const ws = utils.json_to_sheet(data);
       const wb = utils.book_new();
       utils.book_append_sheet(wb, ws, "Mappings");
