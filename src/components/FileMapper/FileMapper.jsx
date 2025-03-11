@@ -87,20 +87,56 @@ const FileMapper = () => {
       const targetText = await formData.targetFile.text();
 
       // Run Pyodide Mapping (Send raw content + format type)
-      const data = await runMappingPyodide(
+      const result  = await runMappingPyodide(
         sourceText,
         formData.sourceType,
         targetText,
         formData.targetType
       );
-
-      console.log(data);
-      const ws = utils.json_to_sheet(data);
-      const wb = utils.book_new();
-      utils.book_append_sheet(wb, ws, "Mappings");
-      writeFile(wb, "field-mappings.xlsx");
+      console.log(result);
+      if (result.status === "success") {
+        // Create Excel workbook
+        const workbook = utils.book_new();
+        
+        // Create main mapping sheet
+        const mainSheetData = [
+          ["Target Field", "Source Field", "Confidence (%)", "Mapping Type", "Logic"]
+        ];
+  
+        // Populate mapping data
+        Object.entries(result.data.mappings).forEach(([targetField, mapping]) => {
+          mainSheetData.push([
+            targetField,
+            mapping.source_field || "<Not Mapped>",
+            mapping.confidence ? Math.round(mapping.confidence * 100) : 0,
+            mapping.mapping_type || "Direct",
+            mapping.logic || ""
+          ]);
+        });
+  
+        const mainSheet = utils.aoa_to_sheet(mainSheetData);
+        utils.book_append_sheet(workbook, mainSheet, "Field Mapping");
+  
+        // Create EDI descriptions sheet if needed
+        if (["EDIFACT", "X12"].includes(result.data.source_format) || 
+            ["EDIFACT", "X12"].includes(result.data.target_format)) {
+          const ediSheetData = [["Field Name", "Description"]];
+          // Add EDI descriptions here if available
+          const ediSheet = utils.aoa_to_sheet(ediSheetData);
+          utils.book_append_sheet(workbook, ediSheet, "EDI Descriptions");
+        }
+  
+        // Save the Excel file
+        writeFile(workbook, "field-mappings.xlsx");
+      } else {
+        console.error("Mapping failed:", result.message);
+        alert("Mapping failed. Please check the console for details.");
+      }
+    } catch (error) {
+      console.error("Error during mapping:", error);
+      alert("An error occurred. Please check the console for details.");
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 
