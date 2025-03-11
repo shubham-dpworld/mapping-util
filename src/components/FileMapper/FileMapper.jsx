@@ -105,10 +105,21 @@ const FileMapper = () => {
   
         // Populate mapping data
         Object.entries(result.data.mappings).forEach(([targetField, mapping]) => {
+          
+          let confidence = mapping.confidence;
+
+          if (confidence == null) {
+              confidence = 0.0;
+          } else if (confidence > 1) {
+              confidence = Number(confidence.toFixed(2)); // Keep as-is if already a percentage
+          } else {
+              confidence = Number((confidence * 100).toFixed(2)); // Convert decimals to percentage
+          }
+      
           mainSheetData.push([
             targetField,
             mapping.source_field || "<Not Mapped>",
-            mapping.confidence ? Math.round(mapping.confidence * 100) : 0,
+            confidence,
             mapping.mapping_type || "Direct",
             mapping.logic || ""
           ]);
