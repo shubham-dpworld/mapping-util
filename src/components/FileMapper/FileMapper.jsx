@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import { utils, writeFile } from "xlsx";
 import "./FileMapper.css";
 import { runMappingPyodide } from "../../utils/runPyodide"; // Import the function
 
