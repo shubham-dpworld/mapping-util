@@ -94,53 +94,27 @@ const FileMapper = () => {
         formData.targetType
       );
       console.log(result);
-      if (result.status === "success") {
-        // Create Excel workbook
-        const workbook = utils.book_new();
-        
-        // Create main mapping sheet
-        const mainSheetData = [
-          ["Target Field", "Source Field", "Confidence (%)", "Mapping Type", "Logic"]
-        ];
-  
-        // Populate mapping data
-        Object.entries(result.data.mappings).forEach(([targetField, mapping]) => {
-          
-          let confidence = mapping.confidence;
-
-          if (confidence == null) {
-              confidence = 0.0;
-          } else if (confidence > 1) {
-              confidence = Number(confidence.toFixed(2)); // Keep as-is if already a percentage
-          } else {
-              confidence = Number((confidence * 100).toFixed(2)); // Convert decimals to percentage
-          }
-      
-          mainSheetData.push([
-            targetField,
-            mapping.source_field || "<Not Mapped>",
-            confidence,
-            mapping.mapping_type || "Direct",
-            mapping.logic || ""
-          ]);
-        });
-  
-        const mainSheet = utils.aoa_to_sheet(mainSheetData);
-        utils.book_append_sheet(workbook, mainSheet, "Field Mapping");
-  
-        // Create EDI descriptions sheet if needed
-        if (["EDIFACT", "X12"].includes(result.data.source_format) || 
-            ["EDIFACT", "X12"].includes(result.data.target_format)) {
-          const ediSheetData = [["Field Name", "Description"]];
-          // Add EDI descriptions here if available
-          const ediSheet = utils.aoa_to_sheet(ediSheetData);
-          utils.book_append_sheet(workbook, ediSheet, "EDI Descriptions");
+      if (result.data?.excel_base64) {
+        // Convert base64 to Uint8Array
+        const byteCharacters = atob(result.data.excel_base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
+        const byteArray = new Uint8Array(byteNumbers);
   
-        // Save the Excel file
-        writeFile(workbook, "field-mappings.xlsx");
+        // Create and trigger download
+        const blob = new Blob([byteArray], { 
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+        });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "AI_Field_Mapping.xlsx";
+        a.click();
+        window.URL.revokeObjectURL(url);
       } else {
-        console.error("Mapping failed:", result.message);
+        console.error("Mapping failed: No data returned.");
         alert("Mapping failed. Please check the console for details.");
       }
     } catch (error) {
