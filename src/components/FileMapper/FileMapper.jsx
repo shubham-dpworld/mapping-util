@@ -18,7 +18,7 @@ const FileMapper = () => {
     XML: ["xml"],
     JSON: ["json"],
     EDIFACT: ["edi", "edifact"],
-    X12: ["x12", "835"],
+    X12: ["edi", "x12", "835"], 
   };
 
   const validateFile = (file, type) => {

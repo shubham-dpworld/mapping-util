@@ -116,7 +116,6 @@ def extract_edifact_fields(content, seg_sep="'", elem_sep="+", sub_elem_sep=":")
     seen_paths = set()
     
     segments = content.strip().split(seg_sep)
-    
     for segment in segments:
         parts = segment.strip().split(elem_sep)  
         segment_type = parts[0].strip()
@@ -149,7 +148,6 @@ def extract_edifact_fields(content, seg_sep="'", elem_sep="+", sub_elem_sep=":")
                 if field_path not in seen_paths:
                     seen_paths.add(field_path)
                     fields.append(field_path)
-    
     return fields
 
 def extract_x12_fields(content, seg_sep="~", elem_sep="*", sub_elem_sep=":"):
@@ -205,7 +203,7 @@ def read_content(content, file_type, seg_sep="~", elem_sep="*", sub_elem_sep=":"
         except ET.ParseError as e:
             raise ValueError(f"Invalid XML: {e}")
     elif file_type == "EDIFACT":
-        return extract_edifact_fields(content, seg_sep, elem_sep, sub_elem_sep)
+        return extract_edifact_fields(content, seg_sep="'", elem_sep="+", sub_elem_sep=":")
     elif file_type == "X12":
         return extract_x12_fields(content, seg_sep, elem_sep, sub_elem_sep)
     else:
@@ -273,10 +271,10 @@ async def main(source_type, source_data, target_type, target_data):
 
 # Execute with properly escaped inputs
 result = main(
-    '''${sourceType}''',
-    r'''${sourceData}''',
-    '''${targetType}''',
-    r'''${targetData}'''
+    """${sourceType}""",
+    r"""${sourceData}""",
+    """${targetType}""",
+    r"""${targetData}"""
 )
 result
 `;
