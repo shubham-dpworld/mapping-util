@@ -255,7 +255,8 @@ def normalize_confidence(confidence):
 
 def generate_edi_description_prompt(edi_fields):
     prompt = EDI_PROMPT_TEMPLATE;
-    # print(f"EDI_PROMPT_TEMPLATE: {prompt}")
+    ediFields = json.dumps(edi_fields, indent=2)
+    prompt = prompt.format(ediFields=ediFields)
     return prompt
 
 def get_edi_field_descriptions(edi_fields):
@@ -332,7 +333,7 @@ async def create_excel_mapping(field_mappings, source_fields, target_fields, sou
             mapping_type = "Manual"
             logic = "Needs manual review"
 
-        print(f"✅ Mapping: {target_field} -> {source_field} (Confidence: {confidence})")
+        # print(f"✅ Mapping: {target_field} -> {source_field} (Confidence: {confidence})")
 
         # Create dropdown validation
         dv = DataValidation(type="list", formula1=dropdown_range, showDropDown=True)

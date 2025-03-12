@@ -13,9 +13,8 @@
     ---
 
     ### **EDI Fields to Describe:**
-    ```json
-    {json.dumps(edi_fields, indent=2)}
-    ```
+    {ediFields}
+    
 
     ---
 

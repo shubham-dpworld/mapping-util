@@ -112,7 +112,7 @@ const FileMapper = () => {
         a.href = url;
         a.download = "AI_Field_Mapping.xlsx";
         a.click();
-        window.URL.revokeObjectURL(url);
+        // window.URL.revokeObjectURL(url);
       } else {
         console.error("Mapping failed: No data returned.");
         alert("Mapping failed. Please check the console for details.");
