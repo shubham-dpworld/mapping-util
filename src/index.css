@@ -11,3 +11,64 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Add to src/index.css */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-size: 16px; /* Base font size */
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+/* Adjust overall container size */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f0f2f5;
+  font-size: 1rem; /* Will inherit from body */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  html, body {
+    font-size: 14px; /* Smaller base font size on mobile */
+  }
+  
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .form-wrapper {
+    padding: 1rem;
+  }
+  
+  .form-section {
+    padding: 1rem;
+  }
+}
+
+/* Specific fixes for the header */
+.logo-gradient {
+  font-size: 1.8rem !important; /* Override the large font */
+}
+
+.logo-platform {
+  font-size: 1.1rem !important;
+}
+
+/* Form adjustments */
+.form-wrapper {
+  max-width: 90%;
+  width: 100%;
+}
+
+/* Adjust form padding */
+.form-section {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
