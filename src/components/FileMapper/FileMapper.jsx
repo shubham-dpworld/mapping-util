@@ -128,6 +128,9 @@ const FileMapper = () => {
   return (
     <div className="form-wrapper">
       <h1 className="title">File Mapping Tool</h1>
+      <p className="description">
+        Generate Excel Sheet for mappings based on your source and target files.
+      </p>
       <form onSubmit={handleSubmit}>
         {['source', 'target'].map((type) => (
           <div key={type} className="form-section">

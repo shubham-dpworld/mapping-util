@@ -121,45 +121,46 @@ const ComponentGenerator = () => {
       apiFormData.append("mappingFile", formData.mappingFile);
 
       // Make API request
-      const response = await fetch(
-        "https://mapping-util.onrender.com/requirements/map-xml-component-generator",
-        {
-          method: "POST",
-          body: apiFormData,
-        }
-      );
+      // const response = await fetch(
+      //   "https://mapping-util.onrender.com/requirements/map-xml-component-generator",
+      //   {
+      //     method: "POST",
+      //     body: apiFormData,
+      //   }
+      // );
 
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
+      // if (!response.ok) {
+      //   throw new Error(`API request failed with status ${response.status}`);
+      // }
 
-      const data = await response.json();
+      // const data = await response.json();
 
+      const data = "test";
       // Handle successful response
       setResult({
         success: true,
-        message: "Component generated successfully!",
+        message:  "Component generated successfully!",
         data: data,
       });
 
       // Handle file download if applicable
-      if (data.zipFileBase64) {
-        // Convert base64 to blob
-        const byteCharacters = atob(data.zipFileBase64);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: "application/zip" });
+      // if (data.zipFileBase64) {
+      //   // Convert base64 to blob
+      //   const byteCharacters = atob(data.zipFileBase64);
+      //   const byteNumbers = new Array(byteCharacters.length);
+      //   for (let i = 0; i < byteCharacters.length; i++) {
+      //     byteNumbers[i] = byteCharacters.charCodeAt(i);
+      //   }
+      //   const byteArray = new Uint8Array(byteNumbers);
+      //   const blob = new Blob([byteArray], { type: "application/zip" });
         
-        // Create download link
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "integration_components.zip";
-        a.click();
-      }
+      //   // Create download link
+      //   const url = window.URL.createObjectURL(blob);
+      //   const a = document.createElement("a");
+      //   a.href = url;
+      //   a.download = "integration_components.zip";
+      //   a.click();
+      // }
     } catch (error) {
       console.error("Error generating component:", error);
       setResult({
@@ -175,7 +176,7 @@ const ComponentGenerator = () => {
     <div className="form-wrapper">
       <h1 className="title">XML Component Generator</h1>
       <p className="description">
-        Generate XML components based on your source and target files along with the mapping file
+        Generate Map XML components based on your source and target files along with the mapping file
         created from the File Mapper tool.
       </p>
       
