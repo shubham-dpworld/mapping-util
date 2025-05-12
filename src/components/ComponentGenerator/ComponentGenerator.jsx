@@ -116,26 +116,24 @@ const ComponentGenerator = () => {
       const apiFormData = new FormData();
       apiFormData.append("sourceType", formData.sourceType);
       apiFormData.append("targetType", formData.targetType);
-      apiFormData.append("sourceFile", formData.sourceFile);
-      apiFormData.append("targetFile", formData.targetFile);
-      apiFormData.append("mappingFile", formData.mappingFile);
+      apiFormData.append("source", formData.sourceFile);
+      apiFormData.append("destination", formData.targetFile);
+      apiFormData.append("excel", formData.mappingFile);
 
       // Make API request
-      // const response = await fetch(
-      //   "https://mapping-util.onrender.com/requirements/map-xml-component-generator",
-      //   {
-      //     method: "POST",
-      //     body: apiFormData,
-      //   }
-      // );
+      const response = await fetch(
+        "http://localhost:8000/map_xml_component_generator",
+        {
+          method: "POST",
+          body: apiFormData,
+        }
+      );
 
-      // if (!response.ok) {
-      //   throw new Error(`API request failed with status ${response.status}`);
-      // }
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
 
-      // const data = await response.json();
-
-      const data = "test";
+      const data = await response.json();
       // Handle successful response
       setResult({
         success: true,
@@ -143,24 +141,6 @@ const ComponentGenerator = () => {
         data: data,
       });
 
-      // Handle file download if applicable
-      // if (data.zipFileBase64) {
-      //   // Convert base64 to blob
-      //   const byteCharacters = atob(data.zipFileBase64);
-      //   const byteNumbers = new Array(byteCharacters.length);
-      //   for (let i = 0; i < byteCharacters.length; i++) {
-      //     byteNumbers[i] = byteCharacters.charCodeAt(i);
-      //   }
-      //   const byteArray = new Uint8Array(byteNumbers);
-      //   const blob = new Blob([byteArray], { type: "application/zip" });
-        
-      //   // Create download link
-      //   const url = window.URL.createObjectURL(blob);
-      //   const a = document.createElement("a");
-      //   a.href = url;
-      //   a.download = "integration_components.zip";
-      //   a.click();
-      // }
     } catch (error) {
       console.error("Error generating component:", error);
       setResult({
@@ -297,11 +277,13 @@ const ComponentGenerator = () => {
         <div className={`result-message ${result.success ? "success" : "error"}`}>
           <h3>{result.success ? "Success!" : "Error"}</h3>
           <p>{result.message}</p>
-          {result.success && result.data?.componentDetails && (
-            <div className="component-details">
-              <h4>Component Details:</h4>
-              <pre>{JSON.stringify(result.data.componentDetails, null, 2)}</pre>
-            </div>
+          {result.success && result.data?.redirectUrl && (
+           <div className="component-details">
+           <h4>BOOMI Map Component XML Url:</h4>
+           <a href={result.data.redirectUrl} target="_blank" rel="noopener noreferrer">
+             {result.data.redirectUrl}
+           </a>
+          </div>
           )}
         </div>
       )}
