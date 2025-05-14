@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import "./FileMapper.css";
-import { runMappingPyodide } from "../../utils/runPyodide"; // Import the function
 
 const FileMapper = () => {
   const [formData, setFormData] = useState({
@@ -81,39 +80,36 @@ const FileMapper = () => {
     setIsLoading(true); // Start loading
 
     try {
-      // Read both files as raw text
-      const sourceText = await formData.sourceFile.text();
-      const targetText = await formData.targetFile.text();
 
-      // Run Pyodide Mapping (Send raw content + format type)
-      const result  = await runMappingPyodide(
-        sourceText,
-        formData.sourceType,
-        targetText,
-        formData.targetType
-      );
-      console.log(result);
-      if (result.data?.excel_base64) {
-        // Convert base64 to Uint8Array
-        const byteCharacters = atob(result.data.excel_base64);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
+      // Create form data for API request
+      const apiFormData = new FormData();
+      apiFormData.append("source_type", formData.sourceType);
+      apiFormData.append("destination_type", formData.targetType);
+      apiFormData.append("source", formData.sourceFile);
+      apiFormData.append("destination", formData.targetFile);
+
+
+      const response = await fetch(
+        "http://127.0.0.1:8000/requirment/mapping-excel-generator",
+        {
+          method: "POST",
+          body: apiFormData,
         }
-        const byteArray = new Uint8Array(byteNumbers);
-  
-        // Create and trigger download
-        const blob = new Blob([byteArray], { 
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
-        });
+      );
+
+      if (response.ok) {
+        const blob = await response.blob();
+        console.log(`blob: ${blob}`);
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
         a.download = "AI_Field_Mapping.xlsx";
+        document.body.appendChild(a);
         a.click();
-        // window.URL.revokeObjectURL(url);
+        a.remove();
+        window.URL.revokeObjectURL(url);
       } else {
-        console.error("Mapping failed: No data returned.");
+        console.error("Failed to download Excel:", response.statusText);
         alert("Mapping failed. Please check the console for details.");
       }
     } catch (error) {
