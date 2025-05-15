@@ -110,6 +110,28 @@ select {
   border-width: 2px; 
 }
 
+.result-message {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.result-message.success {
+  background-color: #f0fff4;
+  border: 1px solid #c6f6d5;
+}
+
+.result-message.error {
+  background-color: #fff5f5;
+  border: 1px solid #fed7d7;
+}
+
+.result-message h3 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
 @media (max-width: 768px) {
   .form-wrapper {
     max-width: 95%; 

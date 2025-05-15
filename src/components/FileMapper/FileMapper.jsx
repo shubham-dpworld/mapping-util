@@ -11,6 +11,7 @@ const FileMapper = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false); // Add loading state
   const fileRefs = useRef({ source: null, target: null });
+  const [result, setResult] = useState(null);
 
   const fileTypes = {
     XML: ["xml"],
@@ -78,6 +79,7 @@ const FileMapper = () => {
     }
 
     setIsLoading(true); // Start loading
+    setResult(null);
 
     try {
 
@@ -97,6 +99,10 @@ const FileMapper = () => {
         }
       );
 
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+
       if (response.ok) {
         const blob = await response.blob();
         console.log(`blob: ${blob}`);
@@ -108,12 +114,22 @@ const FileMapper = () => {
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
+
+        setResult({
+          success: true,
+          message:  "Your file is dowloaded successfully! Check the download folder",
+        });
+  
       } else {
         console.error("Failed to download Excel:", response.statusText);
         alert("Mapping failed. Please check the console for details.");
       }
     } catch (error) {
       console.error("Error during mapping:", error);
+      setResult({
+        success: false,
+        message: `Error: ${error.message}`,
+      });
       alert("An error occurred. Please check the console for details.");
     } finally {
       setIsLoading(false);
@@ -188,6 +204,12 @@ const FileMapper = () => {
           )}
         </button>
       </form>
+      {result && (
+        <div className={`result-message ${result.success ? "success" : "error"}`}>
+          <h3>{result.success ? "Success!" : "Error"}</h3>
+          <p>{result.message}</p>
+        </div>
+      )}
     </div>
   );
 };
