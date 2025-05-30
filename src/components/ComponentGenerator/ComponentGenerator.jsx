@@ -122,7 +122,7 @@ const ComponentGenerator = () => {
 
       // Make API request
       const response = await fetch(
-        "http://localhost:8000/requirment/map-xml-component-generator",
+        "http://localhost:8000/api/generate/map-xml",
         {
           method: "POST",
           body: apiFormData,

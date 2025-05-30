@@ -34,6 +34,11 @@ const Header = () => {
                   XML Component Generator
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to="/component-generator-excel" className="nav-link">
+                  XML Component Generator using Excel
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>

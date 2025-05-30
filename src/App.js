@@ -5,6 +5,7 @@ import Footer from './components/Footer/Footer';
 import FileMapper from './components/FileMapper/FileMapper';
 import ComponentGenerator from './components/ComponentGenerator/ComponentGenerator';
 import './App.css';
+import ComponentGeneratorWithExcel from './components/ComponentGeneratorWithExcel/ComponentGeneratorWithExcel';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<FileMapper />} />
             <Route path="/component-generator" element={<ComponentGenerator />} />
+            <Route path="/component-generator-excel" element={<ComponentGeneratorWithExcel />} />
           </Routes>
         </main>
         <Footer />

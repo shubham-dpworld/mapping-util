@@ -92,7 +92,7 @@ const FileMapper = () => {
 
 
       const response = await fetch(
-        "http://127.0.0.1:8000/requirment/mapping-excel-generator",
+        "http://127.0.0.1:8000/api/generate/mapping-excel-with-source-target",
         {
           method: "POST",
           body: apiFormData,
