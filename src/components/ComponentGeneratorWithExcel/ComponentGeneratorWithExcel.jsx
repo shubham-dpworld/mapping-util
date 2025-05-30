@@ -93,7 +93,7 @@ const ComponentGeneratorWithExcel = () => {
 
   return (
     <div className="form-wrapper">
-      <h1 className="title">XML Component Generator</h1>
+      <h1 className="title">XML Component Generator (using Excel only)</h1>
       <p className="description">
         Generate Map XML components based on your mapping Excel file created from the File Mapper tool.
       </p>
