@@ -1,85 +1,123 @@
 import React, { useState, useRef } from "react";
 import "./ComponentGeneratorWithExcel.css";
 
-const ComponentGeneratorWithExcel = () => {
-  const [formData, setFormData] = useState({
-    mappingFile: null
-  });
+// Helper: Validates file extension
+const isValidExcelFile = (file) => {
+  const extension = file.name.split(".").pop().toLowerCase();
+  return ["xlsx", "xls"].includes(extension);
+};
 
+// Helper: Builds form data for API
+const buildFormData = (file) => {
+  const formData = new FormData();
+  formData.append("excel", file);
+  return formData;
+};
+
+// API call
+const submitToAPI = async (formData) => {
+  const response = await fetch(
+    "http://localhost:8000/api/generate/map-xml-from-excel",
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`API request failed with status ${response.status}`);
+  }
+
+  return await response.json();
+};
+
+// UI Helper: Render file input
+const FileInput = ({
+  label,
+  file,
+  fileRef,
+  onChange,
+  onRemove,
+  errorMessage,
+  accept,
+}) => (
+  <div className="form-group">
+    <label>{label} *</label>
+    <div className="file-upload">
+      <input
+        type="file"
+        ref={fileRef}
+        onChange={onChange}
+        accept={accept}
+      />
+      <span className="file-name">{file?.name || "Choose file"}</span>
+      {file && (
+        <button type="button" className="remove-file-btn" onClick={onRemove}>
+          ×
+        </button>
+      )}
+    </div>
+    {errorMessage && <span className="error-message">{errorMessage}</span>}
+  </div>
+);
+
+const ComponentGeneratorWithExcel = () => {
+  const [formData, setFormData] = useState({ mappingFile: null });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
   const fileRefs = useRef({ mapping: null });
 
-  const validateMappingFile = (file) => {
-    const extension = file.name.split(".").pop().toLowerCase();
-    return ["xlsx", "xls"].includes(extension);
-  };
+  const updateFormData = (field, value) =>
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+  const updateError = (field, message) =>
+    setErrors((prev) => ({ ...prev, [`${field}Error`]: message }));
+
+  const clearError = (field) =>
+    setErrors((prev) => ({ ...prev, [`${field}Error`]: "" }));
 
   const handleFileChange = (e, field) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const errorKey = `${field}Error`;
-
-    if (field === "mappingFile") {
-      if (!validateMappingFile(file)) {
-        setErrors((prev) => ({
-          ...prev,
-          [errorKey]: "Invalid file type for mapping. Please upload Excel (.xlsx, .xls) file",
-        }));
-        return;
-      }
+    if (field === "mappingFile" && !isValidExcelFile(file)) {
+      updateError(field, "Invalid file type. Please upload .xlsx or .xls file.");
+      return;
     }
 
-    setFormData((prev) => ({ ...prev, [field]: file }));
-    setErrors((prev) => ({ ...prev, [errorKey]: "" }));
+    updateFormData(field, file);
+    clearError(field);
   };
 
   const handleRemoveFile = (field) => {
-    if (field === "mappingFile" && fileRefs.current.mapping) {
-      fileRefs.current.mapping.value = "";
+    if (fileRefs.current.mapping) fileRefs.current.mapping.value = "";
+    updateFormData(field, null);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.mappingFile) {
+      newErrors.mappingFileError = "Mapping file required";
     }
-    setFormData((prev) => ({ ...prev, [field]: null }));
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = {};
-
-    if (!formData.mappingFile) newErrors.mappingFileError = "Mapping file required";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsLoading(true);
     setResult(null);
 
     try {
-      const apiFormData = new FormData();
-      apiFormData.append("excel", formData.mappingFile);
-
-      const response = await fetch(
-        "http://localhost:8000/api/generate/map-xml-from-excel",
-        {
-          method: "POST",
-          body: apiFormData,
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await submitToAPI(buildFormData(formData.mappingFile));
       setResult({
         success: true,
         message: "Component generated successfully!",
-        data: data,
+        data,
       });
-
     } catch (error) {
       console.error("Error generating component:", error);
       setResult({
@@ -101,32 +139,15 @@ const ComponentGeneratorWithExcel = () => {
       <form onSubmit={handleSubmit}>
         <div className="form-section">
           <h2>Mapping Configuration</h2>
-          <div className="form-group">
-            <label>Mapping Excel File *</label>
-            <div className="file-upload">
-              <input
-                type="file"
-                ref={(el) => (fileRefs.current.mapping = el)}
-                onChange={(e) => handleFileChange(e, "mappingFile")}
-                accept=".xlsx,.xls"
-              />
-              <span className="file-name">
-                {formData.mappingFile?.name || "Choose file"}
-              </span>
-              {formData.mappingFile && (
-                <button
-                  type="button"
-                  className="remove-file-btn"
-                  onClick={() => handleRemoveFile("mappingFile")}
-                >
-                  ×
-                </button>
-              )}
-            </div>
-            {errors.mappingFileError && (
-              <span className="error-message">{errors.mappingFileError}</span>
-            )}
-          </div>
+          <FileInput
+            label="Mapping Excel File"
+            file={formData.mappingFile}
+            fileRef={(el) => (fileRefs.current.mapping = el)}
+            onChange={(e) => handleFileChange(e, "mappingFile")}
+            onRemove={() => handleRemoveFile("mappingFile")}
+            errorMessage={errors.mappingFileError}
+            accept=".xlsx,.xls"
+          />
         </div>
 
         <button
