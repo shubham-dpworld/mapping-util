@@ -8,9 +8,12 @@ const isValidExcelFile = (file) => {
 };
 
 // Helper: Builds form data for API
-const buildFormData = (file) => {
+const buildFormData = ({ mappingFile, sourceProfileName, destinationProfileName, mapName }) => {
   const formData = new FormData();
-  formData.append("excel", file);
+  formData.append("excel", mappingFile);
+  formData.append("sourceProfileName", sourceProfileName);
+  formData.append("destinationProfileName", destinationProfileName);
+  formData.append("mapName", mapName);
   return formData;
 };
 
@@ -61,8 +64,28 @@ const FileInput = ({
   </div>
 );
 
+// UI Helper: Text Input
+const TextInput = ({ label, value, onChange, errorMessage, field }) => (
+  <div className="form-group">
+    <label>{label} *</label>
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => onChange(field, e.target.value)}
+      className={errorMessage ? "error" : ""}
+    />
+    {errorMessage && <span className="error-message">{errorMessage}</span>}
+  </div>
+);
+
 const ComponentGeneratorWithExcel = () => {
-  const [formData, setFormData] = useState({ mappingFile: null });
+  const [formData, setFormData] = useState({
+    mappingFile: null,
+    sourceProfileName: "",
+    destinationProfileName: "",
+    mapName: "",
+  });
+
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -100,6 +123,15 @@ const ComponentGeneratorWithExcel = () => {
     if (!formData.mappingFile) {
       newErrors.mappingFileError = "Mapping file required";
     }
+    if (!formData.sourceProfileName.trim()) {
+      newErrors.sourceProfileNameError = "Source Profile Name is required";
+    }
+    if (!formData.destinationProfileName.trim()) {
+      newErrors.destinationProfileNameError = "Destination Profile Name is required";
+    }
+    if (!formData.mapName.trim()) {
+      newErrors.mapNameError = "Map Name is required";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -112,7 +144,7 @@ const ComponentGeneratorWithExcel = () => {
     setResult(null);
 
     try {
-      const data = await submitToAPI(buildFormData(formData.mappingFile));
+      const data = await submitToAPI(buildFormData(formData));
       setResult({
         success: true,
         message: "Component generated successfully!",
@@ -139,6 +171,29 @@ const ComponentGeneratorWithExcel = () => {
       <form onSubmit={handleSubmit}>
         <div className="form-section">
           <h2>Mapping Configuration</h2>
+
+          <TextInput
+            label="Source Profile Name"
+            value={formData.sourceProfileName}
+            onChange={updateFormData}
+            field="sourceProfileName"
+            errorMessage={errors.sourceProfileNameError}
+          />
+          <TextInput
+            label="Destination Profile Name"
+            value={formData.destinationProfileName}
+            onChange={updateFormData}
+            field="destinationProfileName"
+            errorMessage={errors.destinationProfileNameError}
+          />
+          <TextInput
+            label="Map Name"
+            value={formData.mapName}
+            onChange={updateFormData}
+            field="mapName"
+            errorMessage={errors.mapNameError}
+          />
+
           <FileInput
             label="Mapping Excel File"
             file={formData.mappingFile}
@@ -153,7 +208,13 @@ const ComponentGeneratorWithExcel = () => {
         <button
           type="submit"
           className="submit-btn"
-          disabled={!formData.mappingFile || isLoading}
+          disabled={
+            !formData.mappingFile ||
+            !formData.sourceProfileName ||
+            !formData.destinationProfileName ||
+            !formData.mapName ||
+            isLoading
+          }
         >
           {isLoading ? (
             <div className="spinner-container">

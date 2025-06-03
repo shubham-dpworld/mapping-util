@@ -105,7 +105,6 @@ const FileMapper = () => {
 
       if (response.ok) {
         const blob = await response.blob();
-        console.log(`blob: ${blob}`);
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
