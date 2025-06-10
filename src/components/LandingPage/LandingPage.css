@@ -1,0 +1,125 @@
+.landing-wrapper {
+    font-family: "Segoe UI", sans-serif;
+    color: #2c3e50;
+    background-color: #f9fbfc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .landing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .nav-links a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #2980b9;
+    font-weight: 500;
+  }
+  
+  .hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 80px;
+    flex: 1;
+  }
+  
+  .hero-text h1 {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+  }
+  
+  .hero-text p {
+    font-size: 1.2rem;
+    color: #555;
+    max-width: 500px;
+  }
+  
+  .cta-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #0491c4;
+    color: white;
+    font-size: 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background-color: #27ae60;
+  }
+  
+  .hero-image img {
+    width: 600px;
+    max-width: 100%;
+    padding-left: 10%;
+    border-radius: 8px;
+  }
+  
+  .features-section {
+    background-color: #ecf0f1;
+    padding: 60px 80px;
+  }
+  
+  .features-section h2 {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .features-grid {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+  
+  .feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    flex: 1;
+    min-width: 250px;
+    max-width: 300px;
+    text-align: center;
+  }
+  
+  .landing-footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+  }
+
+  .footer-slider-text {
+    display: inline-block;
+    position: relative;
+    animation: slideIn 0.6s ease-in-out;
+    will-change: transform, opacity;
+  }
+  
+  @keyframes slideIn {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+  }
