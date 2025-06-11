@@ -8,6 +8,7 @@ import SupportPage from './components/SupportPage/SupportPage';
 import LandingPage from './components/LandingPage/LandingPage';
 import './App.css';
 import ComponentGeneratorWithExcel from './components/ComponentGeneratorWithExcel/ComponentGeneratorWithExcel';
+import ChatBot from './components/ChatBot/ChatBot';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         </main>
         <Footer />
       </div>
+      <ChatBot />
     </Router>
   );
 }

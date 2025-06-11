@@ -3,12 +3,18 @@ import "../ComponentGeneratorWithExcel/ComponentGeneratorWithExcel.css"; // reus
 
 const SupportPage = () => {
   const [trackKey, setTrackKey] = useState("");
+  const [processName, setProcessName] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [statusResult, setStatusResult] = useState(null);
   const [error, setError] = useState("");
 
   const handleStatusCheck = async () => {
     if (!trackKey.trim()) return setError("Please enter a valid key");
+    if (!processName.trim()) return setError("Please enter a process name");
+    if (!fromDate.trim()) return setError("Please enter a from Date");
+    if (!toDate.trim()) return setError("Please enter a to Date");
     setError("");
     setLoading(true);
     setStatusResult(null);
@@ -72,6 +78,14 @@ const parsedData = JSON.parse(data);
       <div className="form-section">
         <h2>Track Your Request</h2>
         <div className="form-group">
+          <label>Enter Process Name *</label>
+          <input
+            type="text"
+            value={processName}
+            onChange={(e) => setProcessName(e.target.value)}
+            className={error ? "error" : ""}
+            placeholder="e.g. CMA_InstaQuote_WSS"
+          />
           <label>Enter Unique Request ID *</label>
           <input
             type="text"
@@ -79,6 +93,22 @@ const parsedData = JSON.parse(data);
             onChange={(e) => setTrackKey(e.target.value)}
             className={error ? "error" : ""}
             placeholder="e.g. eaff756f-b29a-40ff-8d1a-f8f857017f02"
+          />
+          <label>Enter From Date *</label>
+          <input
+            type="text"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className={error ? "error" : ""}
+            placeholder="e.g. 2025-05-15T00:00:00Z"
+          />
+          <label>Enter To Date *</label>
+          <input
+            type="text"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className={error ? "error" : ""}
+            placeholder="e.g. 2025-05-15T00:00:00Z"
           />
           {error && <span className="error-message">{error}</span>}
         </div>
