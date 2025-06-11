@@ -93,16 +93,6 @@
     gap: 30px;
   }
   
-  /* .feature-card {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    flex: 1;
-    min-width: 250px;
-    max-width: 300px;
-    text-align: center;
-  } */
 
   .feature-card {
     text-decoration: none;
@@ -118,9 +108,9 @@
     text-align: center;
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
     cursor: pointer;
-    transition: transform 0.2s ease-out;              /* Smooth tilt and reset */
-    transform-style: preserve-3d;                     /* Allow 3D transformations */
-    perspective: 1000px;                              /* Adds 3D perspective depth */
+    transition: transform 0.2s ease-out;              
+    transform-style: preserve-3d;                     
+    perspective: 1000px;                              
     will-change: transform;    
   }
   
