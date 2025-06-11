@@ -70,9 +70,15 @@
     border-radius: 8px;
   }
   
-  .features-section {
+  /* .features-section {
     background-color: #ecf0f1;
     padding: 60px 80px;
+  } */
+
+  .features-section {
+    background: linear-gradient(to right,#0491c4, #0153b1);
+    padding: 60px 20px;
+    color: #fff;
   }
   
   .features-section h2 {
@@ -87,7 +93,7 @@
     gap: 30px;
   }
   
-  .feature-card {
+  /* .feature-card {
     background: white;
     padding: 30px;
     border-radius: 10px;
@@ -96,6 +102,32 @@
     min-width: 250px;
     max-width: 300px;
     text-align: center;
+  } */
+
+  .feature-card {
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    color: #fff;
+    min-width: 250px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s ease-out;              /* Smooth tilt and reset */
+    transform-style: preserve-3d;                     /* Allow 3D transformations */
+    perspective: 1000px;                              /* Adds 3D perspective depth */
+    will-change: transform;    
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
   }
   
   .landing-footer {

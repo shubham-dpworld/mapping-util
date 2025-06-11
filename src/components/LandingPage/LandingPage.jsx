@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./LandingPage.css"; // Custom styling
 import { useState, useEffect } from "react";
+import FeatureCard from "../Common/FeatureCard";
 
 const messages = [
     "Designed for Integrators",
@@ -13,18 +14,17 @@ const LandingPage = () => {
 
     const [messageIndex, setMessageIndex] = useState(0);
    
-
     useEffect(() => {
     const interval = setInterval(() => {
         setMessageIndex((prev) => (prev + 1) % messages.length);
-    }, 1000);
+    }, 2000);
     return () => clearInterval(interval);
     }, []);
 
   return (
     <div className="landing-wrapper">
       <header className="landing-header">
-        <div className="logo">🧩 MappingUtil - A Product of Integration Platform </div>
+        <div className="logo">🧩 Integration Platform Explore Page</div>
         <nav className="nav-links">
           <Link to="/file-mapper">Generate XML</Link>
           <Link to="/support">Support</Link>
@@ -50,26 +50,32 @@ const LandingPage = () => {
       </main>
 
       <section className="features-section">
-        <h2>Why Use MappingUtil?</h2>
+        <h2>We Proudly Supports!</h2>
         <div className="features-grid">
-          <div className="feature-card">
-            <h3>🧠 Smart Mapping</h3>
-            <p>Automatically process Excel mappings and generate ready-to-import Boomi XML components.</p>
-          </div>
-          <div className="feature-card">
-            <h3>📄 Format Friendly</h3>
-            <p>Support for XLSX/XLS, intuitive field validation, and clean XML output.</p>
-          </div>
-          <div className="feature-card">
-            <h3>💡 Transparent Status</h3>
-            <p>Use your unique tracking key to view detailed status reports in real-time.</p>
-          </div>
+        <FeatureCard
+            to="/file-mapper"
+            icon="🧠"
+            title="Smart Mapping"
+            text="Automatically process Excel mappings and generate ready-to-import Boomi XML components."
+        />
+        <FeatureCard
+            to="/component-generator-excel"
+            icon="📄"
+            title="Automatic Boomi Profile Generation"
+            text="Generate Boomi XML Profiles for request, response and map shape."
+        />
+        <FeatureCard
+            to="/support"
+            icon="💡"
+            title="Transparent Status"
+            text="Use your unique tracking key to view detailed status reports in real-time."
+        />
         </div>
       </section>
 
       <footer className="landing-footer">
       <p>
-        &copy; MappingUtil by DP World |{" "}
+        &copy; Integration Platform by DP World |{" "}
         <span className="footer-slider-text" key={messageIndex}>
           {messages[messageIndex]}
         </span>

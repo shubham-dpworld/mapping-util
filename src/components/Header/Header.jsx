@@ -8,10 +8,10 @@ const Header = () => {
       <div className="header-content">
         <div className="header-container">
           <div className="logo-container">
-            <div className="logo-main">
+            <Link to="/" className="logo-main">
               <span className="logo-gradient">Integration</span>
               <span className="logo-platform">Platform</span>
-            </div>
+            </Link>
             <div className="logo-divider"></div>
             <div className="logo-byline">
               <span className="by-text">by</span>
