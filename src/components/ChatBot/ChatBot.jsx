@@ -1,4 +1,3 @@
-// Chatbot.jsx
 import React, { useState } from "react";
 import "./Chatbot.css";
 
@@ -9,6 +8,7 @@ const Chatbot = () => {
   ]);
   const [step, setStep] = useState("init");
   const [formData, setFormData] = useState({ process: "", trackId: "", from: "", to: "" });
+  const [loading, setLoading] = useState(false);
 
   const toggleChat = () => setIsOpen(!isOpen);
 
@@ -16,6 +16,7 @@ const Chatbot = () => {
     setMessages([{ sender: "bot", text: "Hi! How can I help you today?", type: "text" }]);
     setStep("init");
     setFormData({ process: "", trackId: "", from: "", to: "" });
+    setLoading(false);
   };
 
   const sendMessage = (text, sender = "user") => {
@@ -25,10 +26,7 @@ const Chatbot = () => {
   const handleSelectOption = (option) => {
     sendMessage(option === "1" ? "🔍 Check Unique Key Status" : "❓ Other Issue", "user");
     if (option === "1") {
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: "Please enter the process name:", type: "text" },
-      ]);
+      setMessages((prev) => [...prev, { sender: "bot", text: "Please enter the process name:", type: "text" }]);
       setStep("getProcess");
     } else {
       setMessages((prev) => [
@@ -40,7 +38,7 @@ const Chatbot = () => {
     }
   };
 
-  const handleUserInput = (e) => {
+  const handleUserInput = async (e) => {
     e.preventDefault();
     const input = e.target.userInput.value.trim();
     if (!input) return;
@@ -56,32 +54,47 @@ const Chatbot = () => {
       setStep("getTimeRange");
     } else if (step === "getTimeRange") {
       const [from, to] = input.split("to").map((v) => v.trim());
-      setFormData((prev) => ({ ...prev, from, to }));
+      const updatedForm = { ...formData, from, to };
+      setFormData(updatedForm);
+      setLoading(true);
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          sender: "bot",
-          text: `Here's what I found:\n• "ProcessName" : "(Main)_CT_NPM>CMA_InstaQuote_WSS",
-  "Status" : "COMPLETE",
-  "ExecutionTime" : "20250515 193954.000",
-  "ExecutionDuration" : "2500",
-  "ExecutionId" : "execution-320d53aa-3c3d-4361-9474-31eaf0b26f15-2025.05.15",`,
-        },
-        {
-          sender: "bot",
-          text: "Would you like to start another query?",
-        },
-      ]);
-      setStep("restart");
+      try {
+        const response = await fetch("http://localhost:8000/api/boomi/track-field/status/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ProcessKey: updatedForm.process,
+            FromTime: updatedForm.from,
+            ToTime: updatedForm.to,
+            TrackKey: updatedForm.trackId,
+          }),
+        });
+
+        
+        const data = await response.json();
+        console.log(data);
+        if (response.ok) {
+          setMessages((prev) => [
+            ...prev,
+            { sender: "bot", text: `Here's what I found:\n• ProcessName: ${data.ProcessName}\n• Status: ${data.Status}\n• ExecutionTime: ${data.ExecutionTime}\n• Duration: ${data.ExecutionDuration} ms\n• Execution ID: ${data.ExecutionId}`, type: "text" },
+            { sender: "bot", text: "Would you like to start another query?", type: "text" },
+          ]);
+        } else {
+          setMessages((prev) => [...prev, { sender: "bot", text: `Error: ${data.error || "Something went wrong"}` }]);
+        }
+      } catch (err) {
+        setMessages((prev) => [...prev, { sender: "bot", text: `Error: ${err.message}` }]);
+      } finally {
+        setLoading(false);
+        setStep("restart");
+      }
     } else if (step === "restart") {
       if (/yes|start|again/i.test(input)) {
         resetChat();
       } else {
-        setMessages((prev) => [
-          ...prev,
-          { sender: "bot", text: "Okay! Feel free to reach out if you need more help." },
-        ]);
+        setMessages((prev) => [...prev, { sender: "bot", text: "Okay! Feel free to reach out if you need more help." }]);
         setStep("done");
       }
     }
@@ -108,6 +121,7 @@ const Chatbot = () => {
                 <button onClick={() => handleSelectOption("2")}>❓ Other Issue</button>
               </div>
             )}
+            {loading && <div className="chatbot-msg bot">Fetching result...</div>}
           </div>
           {step !== "init" && step !== "done" && (
             <form className="chatbot-input" onSubmit={handleUserInput}>

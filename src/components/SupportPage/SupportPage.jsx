@@ -20,23 +20,37 @@ const SupportPage = () => {
     setStatusResult(null);
 
     try {
-    //   const response = await fetch(`http://localhost:8000/api/status/${trackKey}`);
-    //   if (!response.ok) throw new Error("Status not found");
-      // const data = await response.json();
+   
+      const response = await fetch("http://localhost:8000/api/boomi/track-field/status/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ProcessKey: processName,
+          FromTime: fromDate,
+          ToTime: toDate,
+          TrackKey: trackKey
+        }),
+      });
 
-      const data = `{
-  "ProcessName" : "(Main)_CT_NPM>CMA_InstaQuote_WSS",
-  "Status" : "COMPLETE",
-  "ExecutionTime" : "20250515 193954.000",
-  "ExecutionDuration" : "2500",
-  "ExecutionId" : "execution-320d53aa-3c3d-4361-9474-31eaf0b26f15-2025.05.15",
-  "TrackKey" : [
-    "eaff756f-b29a-40ff-8d1a-f8f857017f02"
-  ]
-}
-`;
-const parsedData = JSON.parse(data);
-      setStatusResult(parsedData);
+    if (!response.ok) throw new Error("Status not found");
+    const data = await response.json();
+    
+
+//       const data = `{
+//   "ProcessName" : "(Main)_CT_NPM>CMA_InstaQuote_WSS",
+//   "Status" : "COMPLETE",
+//   "ExecutionTime" : "20250515 193954.000",
+//   "ExecutionDuration" : "2500",
+//   "ExecutionId" : "execution-320d53aa-3c3d-4361-9474-31eaf0b26f15-2025.05.15",
+//   "TrackKey" : [
+//     "eaff756f-b29a-40ff-8d1a-f8f857017f02"
+//   ]
+// }
+// `;
+ 
+    setStatusResult(data);
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -142,7 +156,11 @@ const parsedData = JSON.parse(data);
       {/* Support Form */}
       <div className="form-section">
         <h2>Submit a Support Request</h2>
-        <p className="description">For any issue or clarification, contact us via internal support channels or raise a ticket.</p>
+        <p style={{
+          color: '#555',
+          lineHeight: '1.6',
+          padding: '6px 16px',
+}}>For any issue or clarification, contact us via internal support channels or raise a ticket.</p>
       </div>
     </div>
   );

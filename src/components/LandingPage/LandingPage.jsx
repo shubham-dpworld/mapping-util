@@ -26,7 +26,7 @@ const LandingPage = () => {
       <header className="landing-header">
         <div className="logo">🧩 Integration Platform Explore Page</div>
         <nav className="nav-links">
-          <Link to="/file-mapper">Generate XML</Link>
+          <Link to="/file-mapper">Generate Mapping</Link>
           <Link to="/support">Support</Link>
         </nav>
       </header>
